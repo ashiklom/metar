@@ -1,0 +1,18 @@
+Package: metar
+Version: 0.0.0.9000
+Title: Add metadata to your data
+Description: A tool for working with metadata.
+Authors@R: person("Alexey", "Shiklomanov", , "alexey.shiklomanov@gmail.com", c("aut", "cre"))
+License: MIT + file LICENSE
+Imports:
+    rlang,
+    sticky,
+    magrittr,
+    tibble
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+Roxygen: list(markdown = TRUE)
+Suggests: 
+    testthat
+RoxygenNote: 6.0.1
