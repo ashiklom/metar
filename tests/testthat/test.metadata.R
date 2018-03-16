@@ -1,13 +1,10 @@
-context("Adding and accessing metadata")
-
-import::from("tibble", "as_tibble", "tribble")
-import::from("magrittr", "%>%")
+context("Adding and processing metadata")
 
 test_that(
-  "Adding metadata works as expected",
+  "Adding basic metadata works as expected",
   {
-    iris_tbl <- as_tibble(iris)
-    species_description <- tribble(
+    iris_tbl <- tibble::as_tibble(iris)
+    species_description <- tibble::tribble(
       ~Species, ~description,
       "setosa", "pretty",
       "virginica", "pure",
@@ -29,5 +26,36 @@ test_that(
     expect_equal(attr(iris_md$Sepal.Width, "unit"), "in")
     expect_equal(attr(iris_md$Species, "description"), species_description)
     expect_equal(attr(iris_md, "author"), "Alexey Shiklomanov")
+  }
+)
+
+test_that(
+  "Metadata is processed correctly",
+  {
+    meta_data <- list(resources = list(fields = list(
+      list(name = "col1", type = "string", label = "one"),
+      list(name = "col2", class = "character", type = "string", label = "two"),
+      list(name = "col3", type = "number", label = "three"),
+      list(name = "col4", type = "datetime", label = "four")
+      ))
+    )
+    classes <- extract_colclasses(meta_data)
+    col_names <- purrr::map_chr(meta_data$resources$fields, "name")
+    expect_named(classes, col_names)
+
+    class_vec <- purrr::map_chr(classes, 1)
+    expect_named(class_vec, col_names)
+    expect_equal(class_vec,
+                 c(col1 = "character", col2 = "character",
+                   col3 = "numeric", col4 = "POSIXct"))
+
+    attrs <- extract_attributes(meta_data)
+    expect_named(attrs, c(col_names, ".root"))
+    expect_equivalent(
+      attrs,
+      list(col1 = list(label = "one"), col2 = list(label = "two"),
+           col3 = list(label = "three"), col4 = list(label = "four"),
+           .root = list())
+    )
   }
 )

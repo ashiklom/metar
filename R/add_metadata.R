@@ -9,11 +9,13 @@ add_metadata <- function(.data, ..., .root = list()) {
   dots <- rlang::list2(...)
   columns <- names(dots)
   for (i in seq_along(dots)) {
+    if (!length(dots[[i]]) > 0) next
     column <- columns[i]
     .data[[column]] <- rlang::set_attrs(.data[[column]], !!!dots[[i]])
   }
   if (length(.root) > 0) {
     .data <- rlang::set_attrs(.data, !!!.root)
   }
-  sticky::sticky_all(.data)
+  # Make attributes of columns and data frame itself persistent
+  sticky::sticky_all(.data) %>% sticky::sticky()
 }

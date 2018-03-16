@@ -2,4 +2,10 @@
 
 export("%>%")
 export(add_metadata)
+export(extract_attributes)
+export(extract_colclasses)
+export(read_csvy)
+export(read_yaml_header)
+export(write_yaml)
 importFrom(magrittr,"%>%")
+importFrom(utils,modifyList)

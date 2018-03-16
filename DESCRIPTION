@@ -1,18 +1,23 @@
 Package: metar
-Version: 0.0.0.9000
-Title: Add metadata to your data
-Description: A tool for working with metadata.
+Version: 0.1.1
+Title: Add Metadata to your Data
+Description: Utilities to add metadata to tabular data and store it in 
+    machine-readable plain text files.
 Authors@R: person("Alexey", "Shiklomanov", , "alexey.shiklomanov@gmail.com", c("aut", "cre"))
+URL: https://github.com/ashiklom/metar
 License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
 Imports:
     rlang,
     sticky,
     magrittr,
-    tibble
-Encoding: UTF-8
-LazyData: true
-ByteCompile: true
-Roxygen: list(markdown = TRUE)
+    tibble,
+    yaml,
+    data.table,
+    purrr
 Suggests: 
     testthat
 RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)
