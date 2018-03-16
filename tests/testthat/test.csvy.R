@@ -39,5 +39,20 @@ test_that(
       Sepal.Width = list(unit = "in", description = "Duh!"),
       .root = list(description = "Famous data", author = "Alexey")
     )
+    meta <- get_all_metadata(iris_md)
+    expect_true("description" %in% names(meta))
+    expect_true("author" %in% names(meta))
+    expect_true("resources" %in% names(meta))
+    resources <- meta$resources
+    expect_is(resources, "list")
+    expect_true("fields" %in% names(resources))
+    fields <- resources$fields
+    field_cols <- purrr::map_chr(fields, "name")
+    expect_equal(field_cols, names(iris_md))
+
+    tmp <- tempfile()
+    write_csvy(iris_md, tmp)
+    test_iris <- read_csvy(tmp, verbose = FALSE)
+    expect_equivalent(iris_md, test_iris)
   }
 )

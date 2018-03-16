@@ -10,8 +10,8 @@ knitr::opts_chunk$set(
 
 `metar` combines several utilities, including
 many packages of the core [tidyverse](https://www.tidyverse.org/),
-the [sticky](https://cran.r-project.org/web/packages/sticky/index.html) package for persistent attributes,
-and the [data.table](https://cran.r-project.org/web/packages/data.table/) package for fast I/O,
+the [sticky](https://CRAN.R-Project.org/package=sticky) package for persistent attributes,
+and the [data.table](https://CRAN.R-Project.org/package=data.table) package for fast I/O,
 to provide a comprehensive interface for working with data and its metadata.
 Currently the package provides utilities for:
 

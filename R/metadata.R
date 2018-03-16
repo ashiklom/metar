@@ -2,7 +2,7 @@
 #'
 #' @inheritParams add_metadata
 #' @param ... Unquoted values to extract from metadata
-#' @param value_list List of value-name pairs to be passed to `add_metadata`
+#' @param value List of value-name pairs to be passed to `add_metadata`
 #' @export
 metadata <- function(.data, ...) {
   attrs <- attributes(.data)
@@ -18,10 +18,10 @@ metadata <- function(.data, ...) {
 
 #' @rdname metadata
 #' @export
-`metadata<-` <- function(.data, value_list) {
-  if (is.null(names(value_list))) {
+`metadata<-` <- function(.data, value) {
+  if (is.null(names(value))) {
     stop("Metadata values must be named.")
   }
-  add_metadata(.data, !!!value_list)
+  add_metadata(.data, !!!value)
 }
 

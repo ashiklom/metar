@@ -6,6 +6,7 @@
 
 ## New features
 
+* Add `write_csvy` function for exporting `data.frames` with metadata to CSVY files.
 * Add `list2df` function for converting lists to `data.frames` list columns where appropriate.
 
 ## Bugfixes

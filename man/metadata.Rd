@@ -7,14 +7,14 @@
 \usage{
 metadata(.data, ...)
 
-metadata(.data, value_list) <- value
+metadata(.data) <- value
 }
 \arguments{
 \item{.data}{Object to which to add metadata}
 
 \item{...}{Unquoted values to extract from metadata}
 
-\item{value_list}{List of value-name pairs to be passed to \code{add_metadata}}
+\item{value}{List of value-name pairs to be passed to \code{add_metadata}}
 }
 \description{
 Access and set object metadata
