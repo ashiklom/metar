@@ -89,11 +89,24 @@ read_csvy <- function(file,
   fread_opts <- modifyList(fread_opts, list(...))
 
   csv_raw <- do.call(data.table::fread, fread_opts)
+  csv_classes <- purrr::map_chr(csv_raw, class)
+  class_mismatch <- csv_classes != fread_opts[["colClasses"]]
+  if (any(class_mismatch)) {
+    if (verbose) {
+      warning("Mismatches in column classes between fread and data. ",
+              "Coercing data to desired classes.")
+    }
+    csv_raw[class_mismatch] <- purrr::map2(
+      csv_raw[class_mismatch],
+      fread_opts[["colClasses"]][class_mismatch],
+      methods::as
+    )
+  }
   if (tbl) {
     csv_raw <- tibble::as_tibble(csv_raw)
   }
   meta_attr <- extract_attributes(meta_data)
-  csv_md <- do.call(add_metadata, c(list(.data = csv_raw), meta_attr))
+  csv_md <- do.call(add_column_metadata, c(list(.data = csv_raw), meta_attr))
   csv_md
 }
 

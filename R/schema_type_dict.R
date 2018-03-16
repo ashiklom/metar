@@ -3,7 +3,7 @@ schema_type_dict <- c(
   "string" = "character",
   "integer" = "integer",
   "number" = "numeric",
-  "factor" = "character",   # Convert to factor afterwards -- fread doesn't do factors
+  "factor" = "factor",
   "date" = "Date",
   "datetime" = "POSIXct",
   "boolean" = "logical"

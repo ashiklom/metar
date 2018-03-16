@@ -1,6 +1,28 @@
 context("Adding and processing metadata")
 
 test_that(
+  "Low level metadata functions work",
+  {
+    obj <- 1:10 %>%
+      add_metadata(title = "Insect counts") %>%
+      add_metadata(scale = "1000") %>%
+      add_metadata(scale = 2000)
+    expect_equal(attr(obj, "title"), "Insect counts")
+    expect_equal(attr(obj, "scale"), 2000)
+    expect_equal(attr(obj[1:5], "title"), "Insect counts")
+
+    obj2 <- obj[7] * 3
+    expect_equal(attr(obj2, "scale"), 2000)
+    expect_equal(attr(obj2, "scale"), 2000)
+
+    obj3 <- letters[1:5]
+    metadata(obj3) <- list(title = "Some letters", purpose = "For testing")
+    expect_equal(attr(obj3, "title"), "Some letters")
+    expect_equal(attr(obj3, "purpose"), "For testing")
+  }
+)
+
+test_that(
   "Adding basic metadata works as expected",
   {
     iris_tbl <- tibble::as_tibble(iris)
@@ -11,7 +33,7 @@ test_that(
       "versicolor", "purple"
     )
     iris_md <- iris_tbl %>%
-      add_metadata(
+      add_column_metadata(
         Sepal.Length = list(title = "Sepal length", unit = "cm"),
         Sepal.Width = list(title = "Sepal width", unit = "in"),
         Species = list(description = species_description),

@@ -1,3 +1,11 @@
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
 # Overview
 
 `metar` combines several utilities, including
@@ -20,15 +28,38 @@ devtools::install_github("ashiklom/metar")
 
 # Usage
 
-Add metadata to the `iris` dataset:
+Add metadata directly to objects:
 
 ```{r}
 library(metar)
+
+obj <- rnorm(100)
+metadata(obj) <- list(title = "Normal draws", description = "Some random normal draws")
+metadata(obj)
+metadata(obj, "title", "description")
+```
+
+You can also use the pipe-friendly `add_metadata`:
+
+```{r}
+obj2 <- runif(100) %>%
+  add_metadata(title = "Normal draws") %>%
+  # Metadata can be added or overwritten
+  add_metadata(author = "RNG", title = "Just kidding, they're uniform draws") %>%
+  # Metadata can be any R object
+  add_metadata(range = list(min = 0, max = 1))
+metadata(obj2)
+metadata(obj2, "range")
+```
+
+Add metadata to each column of the `iris` dataset:
+
+```{r}
 library(dplyr)
 
 iris_md <- iris %>%
   as_tibble() %>%
-  add_metadata(
+  add_column_metadata(
     # Metadata for individual columns
     Sepal.Length = list(title = "Sepal length", unit = "cm"),
     Sepal.Width = list(title = "Sepal width", unit = "in"),
@@ -49,8 +80,9 @@ attributes(iris_md$Sepal.Width)
 These attributes are made persistent through many operations by the `sticky` package.
 
 ```{r}
-attr(iris_md[1, ], "description")
-attr(iris_md$Sepal.Length[1:5], "title")
+metadata(iris_md)
+metadata(iris_md[1, ], "description")
+metadata(iris_md$Sepal.Length[1:5], "title")
 ```
 
 The CSVY format is just a CSV file with a YAML header.
@@ -66,8 +98,8 @@ If read in with the `read_csvy` function, all metadata will be automatically app
 ```{r}
 dat <- read_csvy(system.file("examples/example1.csvy", package = "metar"))
 dat
-attr(dat, "description")
-attr(dat$var1, "label")
+metadata(dat)
+lapply(dat, metadata)
 ```
 
 Note that because `var2` was specified as an `integer` class, it was also read in as an `integer` rather than a `numeric`.

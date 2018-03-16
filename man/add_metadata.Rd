@@ -2,20 +2,18 @@
 % Please edit documentation in R/add_metadata.R
 \name{add_metadata}
 \alias{add_metadata}
-\title{Add metadata to a data frame}
+\title{Add metadata to an object}
 \usage{
-add_metadata(.data, ..., .root = list())
+add_metadata(.data, ...)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or \code{tbl}}
+\item{.data}{Object to which to add metadata}
 
-\item{...}{List of metadata in the form \code{column = list(attr1 = value1, attr2 = value2)}}
-
-\item{.root}{List of metadata fields to be applied to data frame itself}
+\item{...}{List of metadata in the form \code{attr1 = value1, attr2 = value2}}
 }
 \value{
-Data, as a \link[sticky:sticky]{sticky} object with metadata applied
+Data as a \link[sticky:sticky]{sticky} object, with metadata stored in \code{attributes}
 }
 \description{
-Add metadata to a data frame
+Add metadata to an object
 }
