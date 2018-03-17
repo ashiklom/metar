@@ -1,12 +1,19 @@
-```{r setup, echo = FALSE}
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
 
-# Overview
+# metar
 
 `metar` combines several utilities, including
 many packages of the core [tidyverse](https://www.tidyverse.org/),
@@ -22,7 +29,8 @@ Currently the package provides utilities for:
 
 This package is not on CRAN (yet!), but is easy enough to install from GitHub:
 
-```{r, eval = FALSE}
+``` r
+# install.packages("devtools")
 devtools::install_github("ashiklom/metar")
 ```
 

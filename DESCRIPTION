@@ -3,12 +3,15 @@ Version: 0.2.1
 Title: Add Metadata to your Data
 Description: Utilities to add metadata to tabular data and store it in 
     machine-readable plain text files.
-Authors@R: person("Alexey", "Shiklomanov", , "alexey.shiklomanov@gmail.com", c("aut", "cre"))
+Authors@R: c(
+    person("Alexey", "Shiklomanov", , "alexey.shiklomanov@gmail.com", c("aut", "cre"), comment = c(ORCID = "0000-0003-4022-5979"))
+    )
 URL: https://github.com/ashiklom/metar
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
+Language: en-US
 Imports:
     rlang,
     sticky,

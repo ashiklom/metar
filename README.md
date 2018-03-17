@@ -1,6 +1,12 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
-# Overview
+
+# metar
 
 `metar` combines several utilities, including
 many packages of the core [tidyverse](https://www.tidyverse.org/),
@@ -16,8 +22,8 @@ Currently the package provides utilities for:
 
 This package is not on CRAN (yet!), but is easy enough to install from GitHub:
 
-
-```r
+``` r
+# install.packages("devtools")
 devtools::install_github("ashiklom/metar")
 ```
 
