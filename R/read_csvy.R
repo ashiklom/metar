@@ -113,6 +113,14 @@ read_csvy <- function(file,
 #' Convert object to class, dealing with special cases
 convert_class <- function(obj, to) {
   if (to == "Date") return(as.Date(obj))
+  if (to == "factor") {
+    lvls <- attr(to, "factor_levels")
+    if (!is.null(lvls)) {
+      return(factor(obj, lvls))
+    } else {
+      return(factor(obj))
+    }
+  }
   methods::as(obj, to)
 }
 
@@ -149,7 +157,7 @@ extract_colclasses <- function(meta_data, verbose = TRUE) {
 extract_attributes <- function(meta_data) {
   root_md <- setdiff(names(meta_data), c("resources", "fread"))
   .root <- meta_data[root_md]
-  drop_fields <- c("name", "type", "class")
+  drop_fields <- c("name", "type", "class", "levels")
   field_md <- meta_data[["resources"]][["fields"]] %>%
     extract_as_name("name") %>%
     purrr::map(~.[setdiff(names(.), drop_fields)])
@@ -158,13 +166,16 @@ extract_attributes <- function(meta_data) {
 
 field2colclass <- function(field) {
   if ("class" %in% names(field)) {
-    return(field$class)
+    r_class <- field$class
   }
   if ("type" %in% names(field)) {
     schema_type <- field[["type"]]
     r_class <- schema_type_dict[schema_type]
-    return(r_class)
   }
+  if (r_class == "factor" && "levels" %in% names(field)) {
+    attr(r_class, "factor_levels") <- field$levels
+  }
+  r_class
 }
 
 extract_as_name <- function(l, tag) {
