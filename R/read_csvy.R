@@ -99,7 +99,7 @@ read_csvy <- function(file,
     csv_raw[class_mismatch] <- purrr::map2(
       csv_raw[class_mismatch],
       fread_opts[["colClasses"]][class_mismatch],
-      methods::as
+      convert_class
     )
   }
   if (tbl) {
@@ -108,6 +108,12 @@ read_csvy <- function(file,
   meta_attr <- extract_attributes(meta_data)
   csv_md <- do.call(add_column_metadata, c(list(.data = csv_raw), meta_attr))
   csv_md
+}
+
+#' Convert object to class, dealing with special cases
+convert_class <- function(obj, to) {
+  if (to == "Date") return(as.Date(obj))
+  methods::as(obj, to)
 }
 
 #' Extract column classes from metadata
