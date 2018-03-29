@@ -113,6 +113,7 @@ read_csvy <- function(file,
 #' Convert object to class, dealing with special cases
 convert_class <- function(obj, to) {
   if (to == "Date") return(as.Date(obj))
+  if (to == "POSIXct") return(as.POSIXct(obj))
   if (to == "factor") {
     lvls <- attr(to, "factor_levels")
     if (!is.null(lvls)) {
