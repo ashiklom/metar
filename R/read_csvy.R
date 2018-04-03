@@ -89,6 +89,17 @@ read_csvy <- function(file,
   fread_opts <- modifyList(fread_opts, list(...))
 
   csv_raw <- do.call(data.table::fread, fread_opts)
+
+  # Set levels for factor columns
+  factor_classes <- purrr::keep(classes, ~. == "factor" && !is.null(attr(., "factor_levels")))
+  factor_levels <- purrr::map(factor_classes, ~attr(., "factor_levels"))
+  factor_cols <- names(factor_classes)
+  csv_raw[factor_cols] <- purrr::map2(
+    csv_raw[factor_cols],
+    factor_levels,
+    factor
+  )
+
   csv_classes <- purrr::map_chr(csv_raw, class)
   class_mismatch <- csv_classes != fread_opts[["colClasses"]]
   if (any(class_mismatch)) {
@@ -102,6 +113,8 @@ read_csvy <- function(file,
       convert_class
     )
   }
+
+
   if (tbl) {
     csv_raw <- tibble::as_tibble(csv_raw)
   }

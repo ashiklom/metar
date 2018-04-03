@@ -39,6 +39,7 @@ test_that(
       Sepal.Width = list(unit = "in", description = "Duh!"),
       .root = list(description = "Famous data", author = "Alexey")
     )
+    iris_md$testfactor <- factor(sample(letters[1:3], nrow(iris_md), TRUE), c("c", "b", "a"))
     meta <- get_all_metadata(iris_md)
     expect_true("description" %in% names(meta))
     expect_true("author" %in% names(meta))
