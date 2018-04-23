@@ -6,10 +6,10 @@
 #' [yaml::read_yaml] and stored as named attributes. The following metadata 
 #' fields are parsed specially:
 #'
-#'  - `fread` -- contains the arguments to be passed to [data.table::fread], 
+#'  - `read_csv` -- contains the arguments to be passed to [readr::read_csv], 
 #'  such as the field separator (`sep`) and `NA` strings (`na.strings`). In 
-#'  general, this is not necessary because `fread` has sensible defaults and is 
-#'  clever about figuring such things out, but it may improve performance or 
+#'  general, this is not necessary because `read_csv` has sensible defaults and 
+#'  is clever about figuring such things out, but it may improve performance or 
 #'  reliability for particularly large or complex files.
 #'
 #'  - `resources: fields` (Single item `fields` nested inside root item 
@@ -38,21 +38,12 @@
 #' @param metadata Path to additional metadata. If `NULL` (default), assume 
 #' metadata is in `file`.
 #' @inheritParams read_yaml_header
-#' @param tbl Logical. If `TRUE` (default), return a [tbl][tibble::tibble]. If 
-#' `data.table` is `TRUE`, this is automatically set to `FALSE`.
-#' @param data.table Logical. If `TRUE`, return a 
-#' [data.table][data.table::data.table]. Default is `FALSE`.
-#' @param ... Additional arguments to [data.table::fread]
+#' @param ... Additional arguments to [readr::read_csv]
 #' @export
 read_csvy <- function(file,
                       metadata = NULL,
                       verbose = TRUE,
-                      tbl = TRUE,
-                      data.table = FALSE,
                       ...) {
-  if (data.table) {
-    tbl <- FALSE
-  }
   if (!is.null(metadata)) {
     stopifnot(file.exists(metadata))
     tryCatch(
@@ -69,26 +60,26 @@ read_csvy <- function(file,
     }
   }
 
-  fread_opts <- list(
+  readr_opts <- list(
     file = file,
-    data.table = data.table,
     skip = skip_lines
   )
 
-  fread_meta <- meta_data[["fread"]]
-  if (!is.null(fread_meta)) {
-    fread_opts <- modifyList(fread_opts, fread_meta)
+  readr_meta <- meta_data[["read_csv"]]
+
+  if (!is.null(readr_meta)) {
+    readr_opts <- modifyList(readr_opts, readr_meta)
   }
 
   classes <- extract_colclasses(meta_data, verbose = verbose)
   if (!is.null(classes)) {
-    fread_opts[["colClasses"]] <- purrr::map_chr(classes, 1)
+    readr_opts[["col_types"]] <- purrr::map_chr(classes, 1)
   }
 
   # Function arguments take highest priority
-  fread_opts <- modifyList(fread_opts, list(...))
+  readr_opts <- modifyList(readr_opts, list(...))
 
-  csv_raw <- do.call(data.table::fread, fread_opts)
+  csv_raw <- do.call(readr::read_csv, readr_opts)
 
   # Set levels for factor columns
   factor_classes <- purrr::keep(classes, ~. == "factor" && !is.null(attr(., "factor_levels")))
@@ -115,9 +106,6 @@ read_csvy <- function(file,
   }
 
 
-  if (tbl) {
-    csv_raw <- tibble::as_tibble(csv_raw)
-  }
   meta_attr <- extract_attributes(meta_data)
   csv_md <- do.call(add_column_metadata, c(list(.data = csv_raw), meta_attr))
   csv_md
@@ -186,6 +174,7 @@ field2colclass <- function(field) {
     schema_type <- field[["type"]]
     r_class <- schema_type_dict[schema_type]
   }
+  col_class <- match.fun()
   if (r_class == "factor" && "levels" %in% names(field)) {
     attr(r_class, "factor_levels") <- field$levels
   }
