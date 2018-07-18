@@ -3,12 +3,12 @@
 \docType{data}
 \name{schema_type_dict}
 \alias{schema_type_dict}
-\title{Translations between Table Schema types and R's types}
+\title{Translations between Table Schema types and readr column specifications.}
 \format{An object of class \code{character} of length 7.}
 \usage{
 schema_type_dict
 }
 \description{
-Translations between Table Schema types and R's types
+Translations between Table Schema types and readr column specifications.
 }
 \keyword{datasets}

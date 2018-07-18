@@ -13,8 +13,7 @@ extract_colclasses(meta_data, verbose = TRUE)
 \item{verbose}{Logical. If \code{TRUE}, warn about missing fields.}
 }
 \value{
-Named vector of column classes, suitable for \code{colClasses} argument
-of \link[data.table:fread]{data.table::fread}.
+\code{readr::cols} column type specification for each column.
 }
 \description{
 Extract column classes from metadata

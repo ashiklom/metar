@@ -1,10 +1,20 @@
-#' Translations between Table Schema types and R's types
+#' Translations between Table Schema types and readr column specifications.
 schema_type_dict <- c(
   "string" = "character",
   "integer" = "integer",
-  "number" = "numeric",
+  "number" = "number",
   "factor" = "factor",
-  "date" = "Date",
-  "datetime" = "POSIXct",
+  "date" = "date",
+  "datetime" = "datetime",
   "boolean" = "logical"
+)
+
+#' Translations from readr classes to base R classes
+base_to_readr_class_dict <- c(
+  "character" = "character",
+  "integer" = "integer",
+  "numeric" = "number",
+  "factor" = "factor",
+  "Date" = "date",
+  "POSIXct" = "datetime"
 )

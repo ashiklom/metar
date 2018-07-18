@@ -5,8 +5,7 @@ test_that(
   {
     example_file <- system.file("examples/example1.csvy", package = "metar")
 
-    expect_warning(read_csvy(example_file), "Mismatches in column classes")
-    test_in <- read_csvy(example_file, verbose = FALSE)
+    test_in <- expect_warning(read_csvy(example_file), "2 parsing failures.")
 
     expect_equal(metadata(test_in, "name"), list(name = "example-dataset-1"))
     expect_equal(metadata(test_in, "description"), list(description = "An example dataset"))
@@ -50,6 +49,17 @@ test_that(
     fields <- resources$fields
     field_cols <- purrr::map_chr(fields, "name")
     expect_equal(field_cols, names(iris_md))
+
+    iris_col_types <- get_readr_col_types(iris_md)
+    expect_equal(
+      iris_col_types,
+      c(Sepal.Length = "number",
+        Sepal.Width = "number",
+        Petal.Length = "number",
+        Petal.Width = "number",
+        Species = "factor",
+        testfactor = "factor")
+    )
 
     tmp <- tempfile()
     write_csvy(iris_md, tmp)

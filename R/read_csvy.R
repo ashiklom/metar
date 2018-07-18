@@ -71,9 +71,9 @@ read_csvy <- function(file,
     readr_opts <- modifyList(readr_opts, readr_meta)
   }
 
-  classes <- extract_colclasses(meta_data, verbose = verbose)
-  if (!is.null(classes)) {
-    readr_opts[["col_types"]] <- purrr::map_chr(classes, 1)
+  col_classes <- extract_colclasses(meta_data, verbose = verbose)
+  if (!is.null(col_classes)) {
+    readr_opts[["col_types"]] <- col_classes
   }
 
   # Function arguments take highest priority
@@ -81,49 +81,9 @@ read_csvy <- function(file,
 
   csv_raw <- do.call(readr::read_csv, readr_opts)
 
-  # Set levels for factor columns
-  factor_classes <- purrr::keep(classes, ~. == "factor" && !is.null(attr(., "factor_levels")))
-  factor_levels <- purrr::map(factor_classes, ~attr(., "factor_levels"))
-  factor_cols <- names(factor_classes)
-  csv_raw[factor_cols] <- purrr::map2(
-    csv_raw[factor_cols],
-    factor_levels,
-    factor
-  )
-
-  csv_classes <- purrr::map_chr(csv_raw, class)
-  class_mismatch <- csv_classes != fread_opts[["colClasses"]]
-  if (any(class_mismatch)) {
-    if (verbose) {
-      warning("Mismatches in column classes between fread and data. ",
-              "Coercing data to desired classes.")
-    }
-    csv_raw[class_mismatch] <- purrr::map2(
-      csv_raw[class_mismatch],
-      fread_opts[["colClasses"]][class_mismatch],
-      convert_class
-    )
-  }
-
-
   meta_attr <- extract_attributes(meta_data)
   csv_md <- do.call(add_column_metadata, c(list(.data = csv_raw), meta_attr))
   csv_md
-}
-
-#' Convert object to class, dealing with special cases
-convert_class <- function(obj, to) {
-  if (to == "Date") return(as.character(obj))
-  if (to == "POSIXct") return(as.character(obj))
-  if (to == "factor") {
-    lvls <- attr(to, "factor_levels")
-    if (!is.null(lvls)) {
-      return(factor(obj, lvls))
-    } else {
-      return(factor(obj))
-    }
-  }
-  methods::as(obj, to)
 }
 
 #' Extract column classes from metadata
@@ -131,8 +91,7 @@ convert_class <- function(obj, to) {
 #' @param meta_data Named list of metadata values returned by 
 #' [read_yaml_header]
 #' @param verbose Logical. If `TRUE`, warn about missing fields.
-#' @return Named vector of column classes, suitable for `colClasses` argument 
-#' of [data.table::fread].
+#' @return `readr::cols` column type specification for each column.
 #' @export
 extract_colclasses <- function(meta_data, verbose = TRUE) {
   if (!"resources" %in% names(meta_data)) {
@@ -149,7 +108,8 @@ extract_colclasses <- function(meta_data, verbose = TRUE) {
   }
   fields <- meta_data[["resources"]][["fields"]] %>%
     extract_as_name("name")
-  purrr::map(fields, field2colclass)
+  class_list <- purrr::map(fields, field2colclass)
+  do.call(readr::cols, class_list)
 }
 
 #' Convert metadata list to attributes list suitable for [add_metadata]
@@ -166,6 +126,7 @@ extract_attributes <- function(meta_data) {
   c(field_md, list(.root = .root))
 }
 
+#' Convert field entry to a column class
 field2colclass <- function(field) {
   if ("class" %in% names(field)) {
     r_class <- field$class
@@ -174,11 +135,12 @@ field2colclass <- function(field) {
     schema_type <- field[["type"]]
     r_class <- schema_type_dict[schema_type]
   }
-  col_class <- match.fun()
-  if (r_class == "factor" && "levels" %in% names(field)) {
-    attr(r_class, "factor_levels") <- field$levels
+  col_class <- getFromNamespace(paste0("col_", r_class), "readr")
+  if (r_class == "factor") {
+    col_class(levels = field$levels)
+  } else {
+    col_class()
   }
-  r_class
 }
 
 extract_as_name <- function(l, tag) {

@@ -4,8 +4,7 @@
 \alias{read_csvy}
 \title{Read a CSVY file}
 \usage{
-read_csvy(file, metadata = NULL, verbose = TRUE, tbl = TRUE,
-  data.table = FALSE, ...)
+read_csvy(file, metadata = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{file}{Name of file to read.}
@@ -15,13 +14,7 @@ metadata is in \code{file}.}
 
 \item{verbose}{Logical. If \code{TRUE}, print warning if no header found.}
 
-\item{tbl}{Logical. If \code{TRUE} (default), return a \link[tibble:tibble]{tbl}. If
-\code{data.table} is \code{TRUE}, this is automatically set to \code{FALSE}.}
-
-\item{data.table}{Logical. If \code{TRUE}, return a
-\link[data.table:data.table]{data.table}. Default is \code{FALSE}.}
-
-\item{...}{Additional arguments to \link[data.table:fread]{data.table::fread}}
+\item{...}{Additional arguments to \link[readr:read_csv]{readr::read_csv}}
 }
 \description{
 Read a CSVY file
@@ -33,10 +26,10 @@ list-like object, and any fields not specially recognized will be parsed by
 \link[yaml:read_yaml]{yaml::read_yaml} and stored as named attributes. The following metadata
 fields are parsed specially:
 \itemize{
-\item \code{fread} -- contains the arguments to be passed to \link[data.table:fread]{data.table::fread},
+\item \code{read_csv} -- contains the arguments to be passed to \link[readr:read_csv]{readr::read_csv},
 such as the field separator (\code{sep}) and \code{NA} strings (\code{na.strings}). In
-general, this is not necessary because \code{fread} has sensible defaults and is
-clever about figuring such things out, but it may improve performance or
+general, this is not necessary because \code{read_csv} has sensible defaults and
+is clever about figuring such things out, but it may improve performance or
 reliability for particularly large or complex files.
 \item \code{resources: fields} (Single item \code{fields} nested inside root item
 \code{resources}) -- A list of metadata for the table columns.  These are

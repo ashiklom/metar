@@ -61,15 +61,19 @@ test_that(
       list(name = "col4", type = "datetime", label = "four")
       ))
     )
+
     classes <- extract_colclasses(meta_data)
     col_names <- purrr::map_chr(meta_data$resources$fields, "name")
-    expect_named(classes, col_names)
-
-    class_vec <- purrr::map_chr(classes, 1)
-    expect_named(class_vec, col_names)
-    expect_equal(class_vec,
-                 c(col1 = "character", col2 = "character",
-                   col3 = "numeric", col4 = "POSIXct"))
+    expect_named(classes$cols, col_names)
+    expect_equal(
+      classes,
+      readr::cols(
+        col1 = readr::col_character(),
+        col2 = readr::col_character(),
+        col3 = readr::col_number(),
+        col4 = readr::col_datetime()
+      )
+    )
 
     attrs <- extract_attributes(meta_data)
     expect_named(attrs, c(col_names, ".root"))
